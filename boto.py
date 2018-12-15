@@ -36,15 +36,37 @@ questions_bank={
     'travel': ["travel", "vacation"],
     'swear_word': ["fuck","" "shit", "cunt","bitch", "bullshit", "asshole", "motherfucker", "shitface", "shithead"],
     'greetings': ["hi", "hello", "what's up", "shalom"],
-    'time_of_day': ["morning", "noon", "night"],
+    'food_generic_terms': ["food", "hungry", "restaurant"],
     'food_categories': ["italian", "pizza", "american", "kosher", "bbq", "hummus", "falafel", "vegan", "mediterannean", "sabich", "asian", "sushi", "thai"],
     'music_recs':["music","song" , "beat", "jam", "spotify","rock", "blues", "jazz", "rap", "hip hop", "classical", "electronic"],
+
+}
+
+emotion_animations={
+    'afraid': ["bugs", "creepy", "afraid", "cockroaches", "guns", "shooting", "terrorist", "gunman", "kidnap"],
+    'bored':["so boring", "I'm bored", "What should I do today?", "indoors"],
+    'confused':["math", "problem set", "nuclear science", "biochem", "confused", "I don't get it"],
+    'crying': ["tears", "break up", "ended things", "dog died", "cancer", "sick", "dead", "died", "suicide", "can't"],
+    'dancing': ["music","song" , "beat", "jam", "spotify","rock", "blues", "jazz", "rap", "hip hop", "classical", "electronic"],
+    'dog':["bestie", "best friend", "together", "animals", "companion", "dog", "puppy"],
+    'excited':["birthday", "celebration", "so excited", "so happy"],
+    'giggling':["snickering", "giggle", "ha"],
+    'heartbroke':["over", "broken", "heartache", "heartbreak"],
+    'laughing':["laughing", "cracking up", "so funny", "hilarious", "Sarah Silverman"],
+    'money':["business", "currency", "trade", "dollars", "greed", "getting paper"],
+    'no':["fuck","" "shit", "cunt","bitch", "bullshit", "asshole", "motherfucker", "shitface", "shithead"],
+    'ok':["deal", "satisfied"],
+    'takeoff':["plane", "flight", "travel", "trip", "launching", "launch"],
+    "waiting":["wait", "delay", "be late", "loading", "to load"]
 
 
 }
 
 
 
+def get_animation(input):
+    if any(input.find(s) >= 0 for s in emotion_animations['afraid']):
+        return "afraid"
 
 
 
@@ -108,12 +130,11 @@ def vactaion_travel(input):
 # iteration not working
 def food_rec_function(input):
         input=input.lower()
-        if "food" in input or "restaurant" in input or "hungry" in input:
-            new_list = response_bank['food_categories']
-            q_list = questions_bank['food_categories']
-            for i in range(len(q_list)):
-                if q_list[i] in input:
-                    return "I would recommend {0}".format(new_list[i])
+        new_list = response_bank['food_categories']
+        q_list = questions_bank['food_categories']
+        for i in range(len(q_list)):
+            if q_list[i] in input:
+                return "I would recommend {0}".format(new_list[i])
 
 def talk_to_robot(input):
     message= input.lower()
@@ -121,7 +142,7 @@ def talk_to_robot(input):
         new_list = response_bank['swear_response']
         shuffle(new_list)
         return new_list[0]
-    elif any(input.find(s)>=0 for s in questions_bank['food_categories']):
+    elif "food" in input or "restaurant" in input or "hungry" in input:
         return food_rec_function(input)
     elif any(input.find(s)>=0 for s in questions_bank['travel']):
         return vactaion_travel(input)
@@ -143,7 +164,7 @@ print(talk_to_robot(test_sample))
 def chat():
     user_message = request.POST.get('msg')
     print("chat received {}".format(user_message))
-    return json.dumps({"animation": "excited", "msg": talk_to_robot(user_message)})
+    return json.dumps({"animation": get_animation(user_message), "msg": talk_to_robot(user_message)})
 
 
 @route("/test", method='POST')
