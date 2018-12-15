@@ -7,12 +7,6 @@ import requests
 from random import shuffle
 
 
-
-
-def containQ(question):
-    if "?" in question:
-        return "Say whaaaaaaaaaaaaaaaaaattt {}".format(question)
-
 @route('/', method='GET')
 def index():
     return template("chatbot.html")
@@ -28,9 +22,6 @@ response_bank={
 
 
 }
-
-
-
 
 questions_bank={
     'travel': ["travel", "vacation"],
@@ -61,8 +52,6 @@ emotion_animations={
 
 
 }
-
-
 
 def get_animation(input):
     if any(input.find(s) >= 0 for s in emotion_animations['afraid']):
@@ -133,11 +122,6 @@ def get_city(message):
     else:
         return "Dallas"
 
-# def jokes_function():
- #   r =requests.get('https://antijokes.paineleffler.com')
-
-
-
 
 def get_weather(message):
     choose_city = get_city(message)
@@ -156,25 +140,16 @@ def get_weather(message):
 
 def get_jokes():
     r = requests.get('https://api.yomomma.info')
-    print(r)
     parsed_joke = json.loads(r.content)
-    print(parsed_joke["joke"])
     return parsed_joke["joke"]
 
 
+def vactaion_travel():
+    new_list = response_bank['travel']
+    shuffle(new_list)
+    return "You should travel to {0} ".format(new_list[0])
 
 
-
-
-#not working
-def vactaion_travel(input):
-    print("working")
-
-
-
-
-# need q mark
-# iteration not working
 def food_rec_function(input):
         input=input.lower()
         new_list = response_bank['food_categories']
@@ -192,13 +167,14 @@ def talk_to_robot(input):
     elif "food" in input or "restaurant" in input or "hungry" in input:
         return food_rec_function(input)
     elif any(input.find(s)>=0 for s in questions_bank['travel']):
-        return vactaion_travel(input)
+        return vactaion_travel()
     elif "weather" in message or "temp" in message or "forecast" in message:
         return get_weather(message)
     elif "joke" in input:
         return get_jokes()
     elif " name " in message:
         return greeting_function(message)
+
     else:
         return "say something else to me"
 
