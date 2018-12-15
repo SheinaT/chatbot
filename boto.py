@@ -16,10 +16,8 @@ response_bank={
     'travel': ["France", "Italy", "Jamaica", "US", "Australia", "New Zealand", "Russia", "Thailand"],
     'swear_response': ["wash your mouth", "get your sh*t together"],
     'greetings': ["hi", "hello", "what's up", "shalom"],
-    'time_of_day': ["morning", "noon", "night"],
-    'food_categories': ["Olivery", "Brooklyn", "Su Su & Sons", "Malka", "Meatos", "Abu Adham", "Hakosem", "Anastasia", "The Old Man and the Sea", "Sabich Frishman", "Yakimono", "Ze", "Nam"],
-    'music_recs':["music","song" , "beat", "jam", "spotify"],
-
+    'time_of_day': ["morning", "noon", "night"], 'food_categories': ["Olivery", "Brooklyn", "Su Su & Sons", "Malka", "Meatos", "Abu Adham", "Hakosem", "Anastasia", "The Old Man and the Sea", "Sabich Frishman", "Yakimono", "Ze", "Nam"],
+    'music_recs':["The Strokes", "B.B. King" , "Louis Armstrong", "Childish Gambino", "Bach", "Tiesto", "Robyn"]
 
 }
 
@@ -29,7 +27,7 @@ questions_bank={
     'greetings': ["hi", "hello", "what's up", "shalom"],
     'food_generic_terms': ["food", "hungry", "restaurant"],
     'food_categories': ["italian", "pizza", "american", "kosher", "bbq", "hummus", "falafel", "vegan", "mediterannean", "sabich", "asian", "sushi", "thai"],
-    'music_recs':["music","song" , "beat", "jam", "spotify","rock", "blues", "jazz", "rap", "hip hop", "classical", "electronic"],
+    'music_genre':["rock", "blues", "jazz", "rap", "hip hop", "classical", "electronic", "pop"]
 
 }
 
@@ -149,6 +147,14 @@ def vactaion_travel():
     shuffle(new_list)
     return "You should travel to {0} ".format(new_list[0])
 
+def music_function(input):
+        input = input.lower()
+        music_list = response_bank['music_recs']
+        request_list = questions_bank['music_genre']
+        for i in range(len(request_list)):
+            if request_list[i] in input:
+                return "You would like to listen to {0}".format(music_list[i])
+
 
 def food_rec_function(input):
         input=input.lower()
@@ -174,12 +180,10 @@ def talk_to_robot(input):
         return get_jokes()
     elif " name " in message:
         return greeting_function(message)
-
+    elif "song" in input or "music" in input or "beat" in input:
+        return music_function(input)
     else:
         return "say something else to me"
-
-
-
 
 test_sample = 'where should i travel to?'
 print(talk_to_robot(test_sample))
