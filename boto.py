@@ -67,10 +67,42 @@ emotion_animations={
 def get_animation(input):
     if any(input.find(s) >= 0 for s in emotion_animations['afraid']):
         return "afraid"
+    elif any(input.find(s) >= 0 for s in emotion_animations['bored']):
+        return "bored"
+    elif any(input.find(s) >= 0 for s in emotion_animations['confused']):
+        return "confused"
+    elif any(input.find(s) >= 0 for s in emotion_animations['crying']):
+        return "crying"
+    elif any(input.find(s) >= 0 for s in emotion_animations['dancing']):
+        return "dancing"
+    elif any(input.find(s) >= 0 for s in emotion_animations['dog']):
+        return "dog"
+    elif any(input.find(s) >= 0 for s in emotion_animations['excited']):
+        return "excited"
+    elif any(input.find(s) >= 0 for s in emotion_animations['giggling']):
+        return "giggling"
+    elif any(input.find(s) >= 0 for s in emotion_animations['heartbroke']):
+        return "heartbroke"
+    elif any(input.find(s) >= 0 for s in emotion_animations['laughing']):
+        return "laughing"
+    elif any(input.find(s) >= 0 for s in emotion_animations['money']):
+        return "money"
+    elif any(input.find(s) >= 0 for s in emotion_animations['no']):
+        return "no"
+    elif any(input.find(s) >= 0 for s in emotion_animations['ok']):
+        return "ok"
+    elif any(input.find(s) >= 0 for s in emotion_animations['takeoff']):
+        return "takeoff"
+    elif any(input.find(s) >= 0 for s in emotion_animations['waiting']):
+        return "waiting"
 
 
-
-def greeting_function(name):
+def greeting_function(message):
+        message_list = message.split()
+        if "is" in message:
+            in_index = len(message_list) - 1 - message_list[::-1].index('is')
+            if len(message_list) > in_index + 1:
+                name = message_list[in_index + 1]
         return "Hey there {0}.What can I help you with today?".format(name)
 
 
@@ -119,6 +151,21 @@ def get_weather(message):
         .format(choose_city, description, temp, humidity)
     return weather_sentence
 
+
+
+
+def get_jokes():
+    r = requests.get('https://api.yomomma.info')
+    print(r)
+    parsed_joke = json.loads(r.content)
+    print(parsed_joke["joke"])
+    return parsed_joke["joke"]
+
+
+
+
+
+
 #not working
 def vactaion_travel(input):
     print("working")
@@ -148,9 +195,12 @@ def talk_to_robot(input):
         return vactaion_travel(input)
     elif "weather" in message or "temp" in message or "forecast" in message:
         return get_weather(message)
-
+    elif "joke" in input:
+        return get_jokes()
+    elif " name " in message:
+        return greeting_function(message)
     else:
-        return greeting_function(input)
+        return "say something else to me"
 
 
 
