@@ -4,7 +4,7 @@ This is the template server side for ChatBot
 from bottle import route, run, template, static_file, request
 import json
 import requests
-from random import shuffle
+from random import shuffle, randint
 
 
 @route('/', method='GET')
@@ -15,16 +15,16 @@ def index():
 response_bank={
     'travel': ["France", "Italy", "Jamaica", "US", "Australia", "New Zealand", "Russia", "Thailand"],
     'swear_response': ["wash your mouth", "get your sh*t together"],
-    'greetings': ["hi", "hello", "what's up", "shalom"],
+    'greetings_response': ["hi", "hello", "what's up", "shalom"],
     'time_of_day': ["morning", "noon", "night"], 'food_categories': ["Olivery", "Brooklyn", "Su Su & Sons", "Malka", "Meatos", "Abu Adham", "Hakosem", "Anastasia", "The Old Man and the Sea", "Sabich Frishman", "Yakimono", "Ze", "Nam"],
-    'music_recs':["The Strokes", "B.B. King" , "Louis Armstrong", "Childish Gambino", "Bach", "Tiesto", "Robyn"]
-
+    'music_recs':["The Strokes", "B.B. King" , "Louis Armstrong", "Childish Gambino", "Bach", "Tiesto", "Robyn"],
+    'articles': None
 }
 
 questions_bank={
     'travel': ["travel", "vacation"],
     'swear_word': ["fuck","" "shit", "cunt","bitch", "bullshit", "asshole", "motherfucker", "shitface", "shithead"],
-    'greetings': ["hi", "hello", "what's up", "shalom"],
+    'greetings': ["hi", "hello", "what's up", "shalom", "what's up?", "sup"],
     'food_generic_terms': ["food", "hungry", "restaurant"],
     'food_categories': ["italian", "pizza", "american", "kosher", "bbq", "hummus", "falafel", "vegan", "mediterannean", "sabich", "asian", "sushi", "thai"],
     'music_genre':["rock", "blues", "jazz", "rap", "hip hop", "classical", "electronic", "pop"]
@@ -92,8 +92,6 @@ def greeting_function(message):
                 name = message_list[in_index + 1]
         return "Hey there {0}.What can I help you with today?".format(name)
 
-
-
 def get_city(message):
     message_list = message.split()
     if "in" in message:
@@ -120,7 +118,6 @@ def get_city(message):
     else:
         return "Dallas"
 
-
 def get_weather(message):
     choose_city = get_city(message)
     r = requests.get('https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID={}'
@@ -133,13 +130,26 @@ def get_weather(message):
         .format(choose_city, description, temp, humidity)
     return weather_sentence
 
-
-
-
 def get_jokes():
     r = requests.get('https://api.yomomma.info')
     parsed_joke = json.loads(r.content)
     return parsed_joke["joke"]
+
+def get_news():
+    if response_bank['articles'] is not None:
+        return response_bank['articles'][randint(0, len(response_bank['articles']))]['title']
+
+    else:
+
+        r = requests.get('https://newsapi.org/v2/everything?'
+           'q=Apple&'
+           'from=2018-12-15&'
+           'sortBy=popularity&'
+           'apiKey=e9d65348e2c1407aa3dec727cb8874f5')
+        parsed_r = r.json()
+        response_bank['articles'] = parsed_r['articles']
+
+    return get_news()
 
 
 def vactaion_travel():
@@ -182,8 +192,14 @@ def talk_to_robot(input):
         return greeting_function(message)
     elif "song" in input or "music" in input or "beat" in input:
         return music_function(input)
+    elif any(input.find(s)>=0 for s in questions_bank['greetings']):
+        new_list = response_bank['greetings_response']
+        shuffle(new_list)
+        return new_list[0]
+    elif "news" in input:
+        return 'This just in: {0}'.format(get_news())
     else:
-        return "say something else to me"
+        return "Come Again? Please try something else."
 
 test_sample = 'where should i travel to?'
 print(talk_to_robot(test_sample))
